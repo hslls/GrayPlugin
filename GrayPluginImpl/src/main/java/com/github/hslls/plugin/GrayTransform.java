@@ -3,6 +3,7 @@ package com.github.hslls.plugin;
 import com.android.build.api.transform.QualifiedContent;
 import com.android.build.gradle.internal.pipeline.TransformManager;
 import com.github.hlls.transform.EasyTransform;
+import com.google.common.collect.ImmutableSet;
 
 import org.gradle.api.Project;
 
@@ -34,7 +35,8 @@ public class GrayTransform extends EasyTransform {
 
     @Override
     public Set<? super QualifiedContent.Scope> getScopes() {
-        return TransformManager.SCOPE_FULL_PROJECT;
+//        return TransformManager.SCOPE_FULL_PROJECT;
+        return ImmutableSet.of(QualifiedContent.Scope.PROJECT, QualifiedContent.Scope.SUB_PROJECTS);
     }
 
     @Override
