@@ -1,0 +1,44 @@
+apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/jcenter'
+        }
+
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.9.2'
+    }
+}
+
+repositories {
+    maven {
+        url 'https://dl.bintray.com/mapleleaf/maven'
+    }
+    maven {
+        url 'https://maven.aliyun.com/repository/google'
+    }
+    maven {
+        url 'https://maven.aliyun.com/repository/jcenter'
+    }
+
+    google()
+    jcenter()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'com.github.hlls:transform:0.0.4'
+}
+
+publish {
+    userOrg = 'mapleleaf'
+    groupId = 'com.github.hlls'
+    artifactId = 'gray-plugin'
+    publishVersion = '0.0.1'
+    desc = 'Android界面灰化处理插件'
+    website = 'https://github.com/hslls/GrayPlugin.git'
+}
