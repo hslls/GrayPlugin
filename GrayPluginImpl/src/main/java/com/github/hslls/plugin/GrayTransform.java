@@ -46,6 +46,7 @@ public class GrayTransform extends EasyTransform {
     @Override
     protected boolean isJarFileNeedModify(File jarFile) {
         String jarFilePath = jarFile.getAbsolutePath();
+        System.out.println("JarFilePath " + jarFilePath);
         if (jarFilePath.contains("appcompat")) {
             try {
                 ClassPool.getDefault().appendClassPath(jarFilePath);
