@@ -38,7 +38,7 @@ publish {
     userOrg = 'mapleleaf'
     groupId = 'com.github.hlls'
     artifactId = 'gray-plugin'
-    publishVersion = '0.0.5'
+    publishVersion = '0.0.6'
     desc = 'Android界面灰化处理插件'
     website = 'https://github.com/hslls/GrayPlugin.git'
 }
