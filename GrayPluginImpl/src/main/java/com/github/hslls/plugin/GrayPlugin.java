@@ -11,7 +11,7 @@ public class GrayPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         ExtensionContainer ec = project.getExtensions();
-        ec.create("grayconfig", GrayConfig.class);
+        ec.create("grayConfigs", GrayConfigs.class);
         AppExtension app = ec.getByType(AppExtension.class);
         app.registerTransform(new GrayTransform(project));
     }
