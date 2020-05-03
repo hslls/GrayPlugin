@@ -46,7 +46,7 @@ public class GrayTransform extends EasyTransform {
     @Override
     protected boolean isJarFileNeedModify(File jarFile) {
         String jarFilePath = jarFile.getAbsolutePath();
-        System.out.println("JarFilePath " + jarFilePath);
+        System.out.println("jarFilePath " + jarFilePath);
         if (jarFilePath.contains("appcompat")) {
             try {
                 ClassPool.getDefault().appendClassPath(jarFilePath);
@@ -54,18 +54,20 @@ public class GrayTransform extends EasyTransform {
 
             }
         }
-        return !jarFilePath.contains("gradle/caches/transforms");
+        return jarFilePath.contains("build/intermediates/runtime_library_classes");
     }
 
     @Override
     protected boolean justModifyNotWriteBack(CtClass ctClass) {
         if (ctClass.isInterface()) {
+            System.out.println("justModifyNotWriteBack 1 " + ctClass.getName());
             return false;
         }
 
         FindMethodResult findOnCreateResult = findMethod(ctClass, "onCreate",
                 "(Landroid/os/Bundle;)V");
         if (findOnCreateResult.notFound()) {
+            System.out.println("justModifyNotWriteBack 2 " + ctClass.getName());
             return false;
         }
 
@@ -74,11 +76,13 @@ public class GrayTransform extends EasyTransform {
         FindMethodResult findFindViewByIdResult = findMethod(ctClass, "findViewById",
                 "(I)Landroid/view/View;");
         if (findGetWindowResult.notFound() && findFindViewByIdResult.notFound()) {
+            System.out.println("justModifyNotWriteBack 3 " + ctClass.getName());
             return false;
         }
 
         if (findOnCreateResult.mStatus == FindMethodStatus.IN_SUPER_CLASS) {
             if (!addOverrideMethod(ctClass, findOnCreateResult.mFindMethod)) {
+                System.out.println("justModifyNotWriteBack 4 " + ctClass.getName());
                 return false;
             }
         }
@@ -93,6 +97,7 @@ public class GrayTransform extends EasyTransform {
         }
         if (hasGetWindowMethod) {
             if (!addGetDecorViewMethod1(ctClass)) {
+                System.out.println("justModifyNotWriteBack 5 " + ctClass.getName());
                 return false;
             }
         } else {
@@ -106,23 +111,28 @@ public class GrayTransform extends EasyTransform {
             }
             if (hasFindViewByIdMethod) {
                 if (!addGetDecorViewMethod2(ctClass)) {
+                    System.out.println("justModifyNotWriteBack 6 " + ctClass.getName());
                     return false;
                 }
             } else {
+                System.out.println("justModifyNotWriteBack 7 " + ctClass.getName());
                 return false;
             }
         }
 
         if (!addGetTurnGrayMethod(ctClass)) {
+            System.out.println("justModifyNotWriteBack 8 " + ctClass.getName());
             return false;
         }
 
         try {
             findOnCreateResult.mFindMethod.insertAfter("turnGray(getDecorView());");
         } catch (CannotCompileException e) {
+            System.out.println("justModifyNotWriteBack 9 " + ctClass.getName() + " " + e.getReason());
             return false;
         }
 
+        System.out.println("justModifyNotWriteBack success " + ctClass.getName());
         return true;
     }
 
@@ -154,7 +164,7 @@ public class GrayTransform extends EasyTransform {
                         FindMethodStatus.IN_THIS_CLASS : FindMethodStatus.IN_SUPER_CLASS;
             }
         } catch (NotFoundException e) {
-
+            System.out.println("findMethod " + ctClass.getName() + " " + e.getMessage());
         }
         return result;
     }
@@ -164,6 +174,7 @@ public class GrayTransform extends EasyTransform {
             CtMethod methodOverride = CtNewMethod.delegator(method, ctClass);
             ctClass.addMethod(methodOverride);
         } catch (CannotCompileException e) {
+            System.out.println("addOverrideMethod " + ctClass.getName() + " " + e.getMessage());
             return false;
         }
         return true;
@@ -179,6 +190,7 @@ public class GrayTransform extends EasyTransform {
                     ctClass);
             ctClass.addMethod(method);
         } catch (CannotCompileException e) {
+            System.out.println("addGetDecorViewMethod1 " + ctClass.getName() + " " + e.getMessage());
             return false;
         }
         return true;
@@ -203,6 +215,7 @@ public class GrayTransform extends EasyTransform {
                     ctClass);
             ctClass.addMethod(method);
         } catch (CannotCompileException e) {
+            System.out.println("addGetDecorViewMethod2 " + ctClass.getName() + " " + e.getMessage());
             return false;
         }
         return true;
@@ -225,6 +238,7 @@ public class GrayTransform extends EasyTransform {
                     ctClass);
             ctClass.addMethod(method);
         } catch (CannotCompileException e) {
+            System.out.println("addGetTurnGrayMethod " + ctClass.getName() + " " + e.getMessage());
             return false;
         }
         return true;
