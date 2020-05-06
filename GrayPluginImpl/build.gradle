@@ -1,5 +1,11 @@
 apply plugin: 'java-library'
-apply plugin: 'com.novoda.bintray-release'
+
+boolean pulishLocal = false
+if (pulishLocal) {
+    apply plugin: 'maven-publish'
+} else {
+    apply plugin: 'com.novoda.bintray-release'
+}
 
 buildscript {
     repositories {
@@ -34,11 +40,36 @@ dependencies {
     implementation 'com.github.hlls:transform:0.0.4'
 }
 
-publish {
-    userOrg = 'mapleleaf'
-    groupId = 'com.github.hlls'
-    artifactId = 'gray-plugin'
-    publishVersion = '0.0.7'
-    desc = 'Android界面灰化处理插件'
-    website = 'https://github.com/hslls/GrayPlugin.git'
+String GROUP_ID = 'com.github.hlls'
+String ARTIFACT_ID = 'gray-plugin'
+if (pulishLocal) {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version "0.0.1-SNAPSHOT"
+
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url 'http://localhost:8081/repository/maven-snapshots/'
+                credentials {
+                    username 'your-username'
+                    password 'your-password'
+                }
+            }
+        }
+    }
+} else {
+    publish {
+        userOrg = 'mapleleaf'
+        groupId = GROUP_ID
+        artifactId = ARTIFACT_ID
+        publishVersion = '0.0.7'
+        desc = 'Android界面灰化处理插件'
+        website = 'https://github.com/hslls/GrayPlugin.git'
+    }
 }
