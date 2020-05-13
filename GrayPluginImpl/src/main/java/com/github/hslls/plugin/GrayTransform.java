@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.Set;
 
 import javassist.CannotCompileException;
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
@@ -26,7 +25,7 @@ public class GrayTransform extends EasyTransform {
 
     public GrayTransform(Project project) {
         super(project);
-        mGrayConfigs = mProject.getExtensions().getByType(GrayConfigs.class);
+        mGrayConfigs = mProject.getExtensions().findByType(GrayConfigs.class);
     }
 
     @Override
@@ -40,8 +39,9 @@ public class GrayTransform extends EasyTransform {
     }
 
     @Override
-    public Set<? super QualifiedContent.Scope> getScopes() {
+    public Set<? super QualifiedContent.Scope> getRawScopes() {
 //        return TransformManager.SCOPE_FULL_PROJECT;
+
         return ImmutableSet.of(QualifiedContent.Scope.EXTERNAL_LIBRARIES,
                 QualifiedContent.Scope.PROJECT, QualifiedContent.Scope.SUB_PROJECTS);
     }
@@ -54,7 +54,7 @@ public class GrayTransform extends EasyTransform {
         if (jarFilePath.contains("appcompat")) {
             appendClassPath = true;
         } else {
-            if (mGrayConfigs.appendClassPaths != null) {
+            if ((mGrayConfigs != null) && (mGrayConfigs.appendClassPaths != null)) {
                 for (String s : mGrayConfigs.appendClassPaths) {
                     if (jarFilePath.contains(s)) {
                         appendClassPath = true;
@@ -65,7 +65,7 @@ public class GrayTransform extends EasyTransform {
         }
         if (appendClassPath) {
             try {
-                ClassPool.getDefault().appendClassPath(jarFilePath);
+                appendPermanentClassPath(jarFilePath);
                 println(mGrayConfigs, "appendClassPath " + jarFilePath);
             } catch (NotFoundException e) {
                 println(mGrayConfigs, "appendClassPath failed " + jarFilePath + " " + e.getMessage());
@@ -75,7 +75,7 @@ public class GrayTransform extends EasyTransform {
         if (jarFilePath.contains("build/intermediates/runtime_library_classes")) {
             return true;
         } else {
-            if (mGrayConfigs.modifyJars != null) {
+            if ((mGrayConfigs != null) && (mGrayConfigs.modifyJars != null)) {
                 for (String s : mGrayConfigs.modifyJars) {
                     if (jarFilePath.contains(s)) {
                         return true;
@@ -166,7 +166,7 @@ public class GrayTransform extends EasyTransform {
     }
 
     private static void println(GrayConfigs configs, String x) {
-        if (!configs.printDebugInfo) {
+        if ((configs == null) || !configs.printDebugInfo) {
             return;
         }
         System.out.println(x);

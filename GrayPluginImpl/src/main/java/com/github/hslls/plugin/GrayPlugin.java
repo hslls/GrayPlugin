@@ -1,6 +1,7 @@
 package com.github.hslls.plugin;
 
-import com.android.build.gradle.AppExtension;
+import com.android.build.gradle.BaseExtension;
+import com.github.hlls.transform.EasyTransform;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -12,8 +13,11 @@ public class GrayPlugin implements Plugin<Project> {
     public void apply(Project project) {
         ExtensionContainer ec = project.getExtensions();
         ec.create("grayConfigs", GrayConfigs.class);
-        AppExtension app = ec.getByType(AppExtension.class);
-        app.registerTransform(new GrayTransform(project));
+
+        BaseExtension extension = EasyTransform.getExtension(project);
+        if (extension != null) {
+            extension.registerTransform(new GrayTransform(project));
+        }
     }
 
 }

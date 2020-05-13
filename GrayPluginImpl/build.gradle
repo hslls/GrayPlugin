@@ -9,9 +9,9 @@ if (pulishLocal) {
 
 buildscript {
     repositories {
-        maven {
-            url 'https://maven.aliyun.com/repository/jcenter'
-        }
+//        maven {
+//            url 'https://maven.aliyun.com/repository/jcenter'
+//        }
 
         jcenter()
     }
@@ -24,12 +24,12 @@ repositories {
     maven {
         url 'https://dl.bintray.com/mapleleaf/maven'
     }
-    maven {
-        url 'https://maven.aliyun.com/repository/google'
-    }
-    maven {
-        url 'https://maven.aliyun.com/repository/jcenter'
-    }
+//    maven {
+//        url 'https://maven.aliyun.com/repository/google'
+//    }
+//    maven {
+//        url 'https://maven.aliyun.com/repository/jcenter'
+//    }
 
     google()
     jcenter()
@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
     implementation gradleApi()
-    implementation 'com.github.hlls:transform:0.0.4'
+    implementation 'com.github.hlls:transform:0.0.5'
 }
 
 String GROUP_ID = 'com.github.hlls'
@@ -68,7 +68,7 @@ if (pulishLocal) {
         userOrg = 'mapleleaf'
         groupId = GROUP_ID
         artifactId = ARTIFACT_ID
-        publishVersion = '0.0.7'
+        publishVersion = '0.0.8'
         desc = 'Android界面灰化处理插件'
         website = 'https://github.com/hslls/GrayPlugin.git'
     }
